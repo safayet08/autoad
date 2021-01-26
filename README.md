@@ -20,7 +20,7 @@ Gnome       : 3.28.2
 ```python
     EXAMPLE DATA:
     
-    data={'budget'      : 400,
+    data={'budget'      : 400, # usd
           'start_date'  : '26-1-2021,1:30',
           'end_date'    : '27-1-2021,23:30',
           'objective'   : 'Reach',  
@@ -42,7 +42,6 @@ Gnome       : 3.28.2
 * The **process_data** under **main.py** is the entry point for backend data processing (_only facebook for now_)
 
 # NOTES
-* **CURRENCY**:Seems it needs manual setup
 * **BUDGET**:Must meet a required minimum budget to work (FB POLICY)
 * **TODO:** 
     *   Add error handling--> This needs frontend intervention (minor)

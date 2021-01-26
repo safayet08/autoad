@@ -9,9 +9,7 @@ from datetime import datetime
 from fbads import create_facebook_ad
 # ---------------------------------------------------------
 '''
-    This is the connector script for facebook and google     
-    NOTES:
-        currency depends on account <HOW TO SOLVE THIS?>                    
+    This is the connector script for facebook and google                    
 '''
 # ---------------------------------------------------------
 def split_budget(budget):
