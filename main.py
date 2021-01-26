@@ -101,9 +101,9 @@ if __name__=='__main__':
     '''
         an example data
     '''
-    data={'budget'      : 400, # taka
-          'start_date'  : '26-1-2021,1:30',
-          'end_date'    : '27-1-2021,23:30',
+    data={'budget'      : 20, # usd
+          'start_date'  : '27-1-2021,1:30',
+          'end_date'    : '28-1-2021,23:30',
           'objective'   : 'Reach',  
           'channels'    : [{'facebook':{
                             'business_id' :   "760249887886995",

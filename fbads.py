@@ -8,7 +8,7 @@
 from facebook_business.adobjects.adaccount import AdAccount
 from facebook_business.adobjects.adset import AdSet
 from facebook_business.api import FacebookAdsApi
-from currency_converter import CurrencyConverter
+import requests
 from datetime import datetime
 from dateutil.relativedelta import relativedelta 
 import requests
@@ -19,6 +19,8 @@ import requests
 # ---------------------------------------------------------
 #-----------Globals---------------------------------------
 # ---------------------------------------------------------
+CURRENCY_API_KEY='1e852e43de592de222e1'
+CURRENCY_BASE_URL='https://free.currconv.com/api/v7'
 
 UI_OBJECTIVES =["Sales"          ,"Reach"          ,"Lead Generation","Video Promotion"  ,"App Install"    ,"Store Visit"]
 FB_OBJECTIVES =['POST_ENGAGEMENT','POST_ENGAGEMENT','POST_ENGAGEMENT','POST_ENGAGEMENT'  ,'POST_ENGAGEMENT','POST_ENGAGEMENT']
@@ -232,13 +234,15 @@ def create_facebook_ad( access_token,
                                ad_type=adset_name,
                                ab_test=False)     
     # budget
-    campaign_budget=campaign_budget*100
-    '''
-    converter = CurrencyConverter()
+    #campaign_budget=campaign_budget*100
     account = AdAccount(f'act_{business_id}')
-    currency=account.remote_read(fields=["currency"])["currency"]
-    print(converter.convert(campaign_budget, 'USD', currency))
-    '''
+    currency=account.api_get(fields=["currency"])["currency"]
+    print("Currency:",currency)
+    Q_WORD=f"USD_{currency}"
+    URL=f"{CURRENCY_BASE_URL}/convert?q={Q_WORD}&compact=ultra&apiKey={CURRENCY_API_KEY}"
+    rate=float(requests.get(URL).json()[Q_WORD])
+    campaign_budget=int(rate*campaign_budget)*100
+    print("Budget:",campaign_budget/100,currency)
     
     # create adset
     adset_id=create_adset(business_id=business_id,
