@@ -14,17 +14,13 @@ from fbads import create_facebook_ad
         currency depends on account <HOW TO SOLVE THIS?>                    
 '''
 # ---------------------------------------------------------
-def split_budget(channels,budget):
+def split_budget(budget):
     '''
         splits budget as per channels
         **ONLY AVAILABLE FOR FACEBOOK NOW**
     '''
-    channels=[channel.lower() for channel in channels]
-    # this is a temporary solution until we accumulate enough data for Machine Learned spliting 
-    if "facebook" not in channels:
-        raise ValueError("Facebook is not in channels")
     # convert budget into facebook format
-    facebook_budget =   budget*100 # this is required for setting ads
+    facebook_budget =   budget
     google_budget   =   0
     return facebook_budget,google_budget
 # ---------------------------------------------------------
@@ -41,9 +37,7 @@ def process_data(data,status="PAUSED"):
                         start_date  :   the start date of the campaign by user (UI)     <STRING>[d-m-Y,H:M],
                         end_date    :   the end date of the campaign by user   (UI)     <STRING>[d-m-Y,H:M],
                         objective   :   the objective of the campaign given    (UI)     <STRING>,
-                        channels    :   the channels to divide the budget into (UI)     <LIST OF STRINGS>
-                        facebook    :   dictionary of facebook data            (Backend)<DICTIONARY>
-                        google      :   dictionary of google data              (Backend)<DICTIONARY>
+                        channels    :   the channels to divide the budget into (UI)     <LIST OF DICTIONARY>
                     }
         DATA EXPANSION
         date and time : Time is in 24 Hour format Example: "3-12-2020,23:35"--> indicates 11:35 PM of 3rd December,2020     
@@ -81,11 +75,10 @@ def process_data(data,status="PAUSED"):
     start_date  =   data['start_date']
     end_date    =   data['end_date']
     objective   =   data['objective']
-    channels    =   data['channels']
-    facebook    =   data['facebook']
-    google      =   data['google']                             # this is a futur need 
+    channels    =   data['channels'][0]
+    facebook    =   channels['facebook']
     # budget 
-    facebook_budget,google_budget=split_budget(channels,budget)
+    facebook_budget,google_budget=split_budget(budget)
     # facebook variables
     business_id = facebook['business_id'] 
     page_id     = facebook['page_id']                          # this is a future need (Targeting level)
@@ -103,4 +96,26 @@ def process_data(data,status="PAUSED"):
                        creative_id=creative_id,
                        status=status)      
 
+
+if __name__=='__main__':
+    '''
+        an example data
+    '''
+    data={'budget'      : 400, # taka
+          'start_date'  : '26-1-2021,1:30',
+          'end_date'    : '27-1-2021,23:30',
+          'objective'   : 'Reach',  
+          'channels'    : [{'facebook':{
+                            'business_id' :   "760249887886995",
+                            'page_id'     :   "Markopoloai",
+                            'access_token':   "",
+                            'creative_id' :   "23846237956520529",
+                            'geo_location': {
+                                                'countries':['BD'], 
+                                            }
+                         }}],
+            
+        }
+    # testing    
+    process_data(data=data)
 

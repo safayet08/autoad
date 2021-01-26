@@ -8,6 +8,7 @@
 from facebook_business.adobjects.adaccount import AdAccount
 from facebook_business.adobjects.adset import AdSet
 from facebook_business.api import FacebookAdsApi
+from currency_converter import CurrencyConverter
 from datetime import datetime
 from dateutil.relativedelta import relativedelta 
 import requests
@@ -230,6 +231,15 @@ def create_facebook_ad( access_token,
     targeting=create_targeting(geo_locations=geo_locations,
                                ad_type=adset_name,
                                ab_test=False)     
+    # budget
+    campaign_budget=campaign_budget*100
+    '''
+    converter = CurrencyConverter()
+    account = AdAccount(f'act_{business_id}')
+    currency=account.remote_read(fields=["currency"])["currency"]
+    print(converter.convert(campaign_budget, 'USD', currency))
+    '''
+    
     # create adset
     adset_id=create_adset(business_id=business_id,
                             campaign_id=campaign_id,
