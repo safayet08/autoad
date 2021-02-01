@@ -1,12 +1,6 @@
-#-*- coding: utf-8 -*-
-"""
-@author: MD.Nazmuddoha Ansary
-"""
-# ---------------------------------------------------------
-# -------------------imports------------------------------
-# ---------------------------------------------------------
 from datetime import datetime
 from fbads import create_facebook_ad
+import jsons
 # ---------------------------------------------------------
 '''
     This is the connector script for facebook and google                    
@@ -25,7 +19,6 @@ def split_budget(budget):
 def process_data(data,status="PAUSED"):
     '''
         TODO: Add error handling
-
         this receives the data from backend for further processing
         args:
             data    :      The passed json data from backend
@@ -39,7 +32,6 @@ def process_data(data,status="PAUSED"):
                     }
         DATA EXPANSION
         date and time : Time is in 24 Hour format Example: "3-12-2020,23:35"--> indicates 11:35 PM of 3rd December,2020     
-
         facebook:   Either set to "None" if not selected 
                     or must be a dictionary of the following variables
                     {
@@ -92,11 +84,14 @@ def process_data(data,status="PAUSED"):
                        campaign_objective=objective,
                        geo_locations=geo_location,
                        creative_id=creative_id,
-                       status=status)      
+                       status=status) 
 
 
-if __name__=='__main__':
-    '''
+
+def autoad(event, context):
+
+
+      '''
         an example data
     '''
     data={'budget'      : 20, # usd
@@ -115,5 +110,25 @@ if __name__=='__main__':
             
         }
     # testing    
-    process_data(data=data)
+    process_data(data=event.body)
 
+
+    body = {
+        "message": "ad created!",
+    }
+
+    response = {
+        "statusCode": 200,
+        "body": json.dumps(body)
+    }
+
+    return response
+
+    # Use this code if you don't use the http event with the LAMBDA-PROXY
+    # integration
+    """
+    return {
+        "message": "Go Serverless v1.0! Your function executed successfully!",
+        "event": event
+    }
+    """
