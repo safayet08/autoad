@@ -19,3 +19,7 @@ venv
 
 # Serverless directories
 .serverless
+
+autoad/*
+__pycache__/*
+.vscode/*

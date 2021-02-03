@@ -1,6 +1,6 @@
 from datetime import datetime
 from fbads import create_facebook_ad
-import jsons
+import json
 # ---------------------------------------------------------
 '''
     This is the connector script for facebook and google                    
@@ -91,7 +91,7 @@ def process_data(data,status="PAUSED"):
 def autoad(event, context):
 
 
-      '''
+    '''
         an example data
     '''
     data={'budget'      : 20, # usd
