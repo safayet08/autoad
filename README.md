@@ -20,26 +20,25 @@ Gnome       : 3.28.2
 ```python
     EXAMPLE DATA:
     
-    data={'budget'      : 400, # usd
-          'start_date'  : '26-1-2021,1:30',
-          'end_date'    : '27-1-2021,23:30',
-          'objective'   : 'Reach',  
-          'channels'    : ['facebook'],
-          'google'      : None,
-          'facebook'    :{
+    data = {'budget'      : 20, # usd
+            'start_date'  : '27-1-2021,1:30',
+            'end_date'    : '28-1-2021,23:30',
+            'objective'   : 'Reach',  
+            'channels'    : [{'facebook':{
                             'business_id' :   "760249887886995",
                             'page_id'     :   "Markopoloai",
-                            'access_token':   "access_token_this_is_the_only_thing_that_needs_hiding"
+                            'access_token':   "",
                             'creative_id' :   "23846237956520529",
                             'geo_location': {
                                                 'countries':['BD'], 
                                             }
-                         }  
-        }
+                            }}],
+
+    }
     
 
 ```
-* The **process_data** under **main.py** is the entry point for backend data processing (_only facebook for now_)
+* The **process_data** under **handler.py** is the entry point for backend data processing (_only facebook for now_)
 
 # NOTES
 * **BUDGET**:Must meet a required minimum budget to work (FB POLICY)
