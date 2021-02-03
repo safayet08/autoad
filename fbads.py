@@ -41,6 +41,7 @@ def create_campaign(business_id,
                     start_date,
                     end_date,
                     status,
+                    campaign_budget,
                     keyword=None):
     '''
         creates a campaign based on objective
@@ -50,16 +51,20 @@ def create_campaign(business_id,
             start_date          :   start date of the campaign          (provided from backend) <STRING> [d-m-y,H:M]
             end_date            :   end date of the campaign            (provided from backend) <STRING> [d-m-y,H:M]
             status              :   for running the campaign            (PASSED FROM CONNECTOR) <STRING> 
+            campaign_budget     :   the facebook campaign budget        (provided from backend) <STRING>
             keyword             :   specific keyword for the campaign   (if given)
     '''
+    BID         =   'LOWEST_COST_WITHOUT_CAP'
     # get index
     idx=UI_OBJECTIVES.index(campaign_objective)
     # create objective
     fb_objective=FB_OBJECTIVES[idx]
     # request setup
     fields=[]
-    params={ 'name': f"{campaign_objective}|{fb_objective}|{start_date}|{end_date}",
+    params={ 'name': f"CBO_{campaign_objective}|{fb_objective}|{start_date}|{end_date}",
              'objective':fb_objective,
+             'lifetime_budget':campaign_budget,
+             'bid_strategy':'LOWEST_COST_WITHOUT_CAP',
              'status':status,
              'special_ad_categories':[]}
     # create
@@ -79,7 +84,6 @@ def create_preset(campaign_objective):
     class PRESET:
         BILL_EVENT  =   BILLING_EVENTS[idx]
         GOAL        =   GOALS[idx]
-        BID         =   'LOWEST_COST_WITHOUT_CAP'
     return PRESET
 
     
@@ -130,7 +134,6 @@ def create_targeting(geo_locations,
 def create_adset(business_id,
                  campaign_id,
                  adset_name,
-                 adset_budget,
                  PRESET,
                  targeting,
                  status,
@@ -145,7 +148,6 @@ def create_adset(business_id,
             start_date          :   start date of the campaign          (provided from backend) <STRING> [d-m-y,H:M]
             end_date            :   end date of the campaign            (provided from backend) <STRING> [d-m-y,H:M]
             adset_name          :   name of the adset                   (automl selection)      <STRING>
-            adset_budget        :   budget for the adset                (automl selection)      <STRING>
             PRESET              :   class for preset values             (automl selection)      <CLASS>
             targeting           :   targeting dictionary                (automl selection)      <DICTIONARY>
             status              :   for running the campaign            (PASSED FROM CONNECTOR) <STRING>
@@ -154,13 +156,11 @@ def create_adset(business_id,
     fields = []
     params = {
                 'name'              :   f"{adset_name}_{start_date}_{end_date}",
-                'lifetime_budget'   :   adset_budget,
                 'start_time'        :   datetime.strptime(start_date,'%d-%m-%Y,%H:%M').strftime("%Y-%m-%dT%H:%M:%S-0000") ,
                 'end_time'          :   datetime.strptime(end_date,'%d-%m-%Y,%H:%M').strftime("%Y-%m-%dT%H:%M:%S-0000"),
                 'campaign_id'       :   campaign_id,
                 'billing_event'     :   PRESET.BILL_EVENT,
                 'optimization_goal' :   PRESET.GOAL,
-                'bid_strategy'      :   PRESET.BID,
                 'targeting'         :   targeting,
                 'status'            :   status
             }
@@ -217,22 +217,7 @@ def create_facebook_ad( access_token,
     '''
     # api init
     init_api(access_token)
-    # create campaign
-    campaign_id=create_campaign(business_id=business_id,
-                                campaign_objective=campaign_objective,
-                                start_date=start_date,
-                                end_date=end_date,
-                                status=status)
-    print("LOG:Campaign Created:",campaign_id)
-    # PRESET
-    PRESET=create_preset(campaign_objective)
     
-    # adset
-    adset_name="creative"    
-    # get targeting
-    targeting=create_targeting(geo_locations=geo_locations,
-                               ad_type=adset_name,
-                               ab_test=False)     
     # budget
     #campaign_budget=campaign_budget*100
     account = AdAccount(f'act_{business_id}')
@@ -244,16 +229,35 @@ def create_facebook_ad( access_token,
     campaign_budget=int(rate*campaign_budget)*100
     print("Budget:",campaign_budget/100,currency)
     
+    
+
+    # create campaign
+    campaign_id=create_campaign(business_id=business_id,
+                                campaign_objective=campaign_objective,
+                                start_date=start_date,
+                                end_date=end_date,
+                                status=status,
+                                campaign_budget=campaign_budget)
+
+    print("LOG:Campaign Created:",campaign_id)
+    # PRESET
+    PRESET=create_preset(campaign_objective)
+    
+    # adset
+    adset_name="creative"    
+    # get targeting
+    targeting=create_targeting(geo_locations=geo_locations,
+                               ad_type=adset_name,
+                               ab_test=False)     
     # create adset
     adset_id=create_adset(business_id=business_id,
-                            campaign_id=campaign_id,
-                            adset_name=adset_name,
-                            adset_budget=campaign_budget,
-                            PRESET=PRESET,
-                            targeting=targeting,
-                            status=status,
-                            start_date=start_date,
-                            end_date=end_date)
+                        campaign_id=campaign_id,
+                        adset_name=adset_name,
+                        PRESET=PRESET,
+                        targeting=targeting,
+                        status=status,
+                        start_date=start_date,
+                        end_date=end_date)
 
     print("LOG:Adset Created:",adset_id)
     

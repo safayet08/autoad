@@ -1,3 +1,8 @@
+#-*- coding: utf-8 -*-
+"""
+@author: MD.Nazmuddoha Ansary,Omer Sayem
+"""
+# ---------------------------------------------------------
 from datetime import datetime
 from fbads import create_facebook_ad
 import json
@@ -93,7 +98,7 @@ def autoad(event, context):
 
     '''
         an example data
-    '''
+    
     data={'budget'      : 20, # usd
           'start_date'  : '27-1-2021,1:30',
           'end_date'    : '28-1-2021,23:30',
@@ -109,6 +114,7 @@ def autoad(event, context):
                          }}],
             
         }
+    '''
     # testing    
     process_data(data=event.body)
 
